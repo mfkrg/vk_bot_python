@@ -64,6 +64,15 @@ for event in longpool.listen():
                     text_ves = text_ves.replace('True', 'В наличии')
                     text_ves = text_ves.replace('None', '')
                     send_some_message(id, (str(text_ves)))
+                keyboard = VkKeyboard(one_time=True)
+                buttons = ["Меню"]
+                button_colors = [VkKeyboardColor.NEGATIVE]
+
+                for btn, btn_color in zip(buttons, button_colors):
+                    keyboard.add_button(btn, btn_color)
+
+                send_some_message(id, "Меню", keyboard)
+
             elif msg == "в наличии":
                 cursor.execute("SELECT title, size, price FROM merch WHERE isavailable = True")
                 goods = cursor.fetchall()
@@ -73,6 +82,15 @@ for event in longpool.listen():
                     text = text.replace('True', 'В наличии')
                     text = text.replace('None', '')
                     send_some_message(id, (str(text)))
+                keyboard = VkKeyboard(one_time=True)
+                buttons = ["Меню"]
+                button_colors = [VkKeyboardColor.NEGATIVE]
+
+                for btn, btn_color in zip(buttons, button_colors):
+                    keyboard.add_button(btn, btn_color)
+
+                send_some_message(id, "Меню", keyboard)
+
             elif msg == "меню":
                 if event.user_id != admin_id:
                     keyboard = VkKeyboard(one_time=True)
@@ -85,7 +103,7 @@ for event in longpool.listen():
                     send_some_message(id, "Выберите нужную категорию", keyboard)
                 elif event.user_id == admin_id:
                     keyboard = VkKeyboard(one_time=True)
-                    buttons = ["Мерч", "Концерты", "Администрирование"]
+                    buttons = ["Мерч", "Концерты", "admin"]
                     button_colors = [VkKeyboardColor.PRIMARY, VkKeyboardColor.SECONDARY, VkKeyboardColor.NEGATIVE]
 
                     for btn, btn_color in zip(buttons, button_colors):
@@ -119,3 +137,15 @@ for event in longpool.listen():
                     ]
                 )
                 send_some_message(id, "Карусель карусель", carousel=carousel_available)
+
+            elif msg == "admin" and event.user_id == admin_id:
+                keyboard = VkKeyboard(one_time=True)
+                buttons = ["НаличиеADM", "ТоварыADM", "КоличествоADM"]
+                button_colors = [VkKeyboardColor.NEGATIVE, VkKeyboardColor.NEGATIVE, VkKeyboardColor.NEGATIVE]
+
+                for btn, btn_color in zip(buttons, button_colors):
+                    keyboard.add_button(btn, btn_color)
+                send_some_message(id, "Выберите что хотите изменить", keyboard)
+
+
+
