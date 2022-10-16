@@ -3,6 +3,7 @@ from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.keyboard import VkKeyboardColor, VkKeyboard
 import psycopg2
 from config import host, user, password, db_name, vk_token, admin_id
+from vktools import Keyboard, Carousel, Element, Text, ButtonColor
 
 #необходимые переменные
 vk_session = vk_api.VkApi(token=vk_token)
@@ -22,16 +23,16 @@ cursor = connection.cursor()
 
 
 #отправка сообщения
-def send_some_message(id, some_text, keyboard=None):
+def send_some_message(id, some_text, keyboard=None, carousel=None):
     post = {
         "user_id": id,
         "message": some_text,
         "random_id": 0
     }
     if keyboard != None:
-        post["keyboard"]=keyboard.get_keyboard()
-    else:
-        post = post
+        post["keyboard"] = keyboard.get_keyboard()
+    if carousel != None:
+        post["template"] = carousel.add_carousel()
 
     vk_session.method("messages.send", post)
 
@@ -91,3 +92,30 @@ for event in longpool.listen():
                         keyboard.add_button(btn, btn_color)
 
                     send_some_message(id, "Выберите нужную категорию", keyboard)
+            elif msg == "карусель мерча":
+                carousel_available = Carousel(
+                    [
+                        Element(
+                            "Первый титульник",
+                            "Первое описание товара",
+                            "-216515089_457239030",
+                            "https://vk.com/market-143314838?w=product-143314838_5867520%2Fquery",
+                            [Text("Button 1", ButtonColor.NEGATIVE)]
+                        ),
+                        Element(
+                            "Второй титул",
+                            "Описание товара 2",
+                            "-216515089_457239030",
+                            "https://vk.com/market-143314838?w=product-143314838_5867519%2Fquery",
+                            [Text("Button num 2", ButtonColor.POSITIVE)]
+                        ),
+                        Element(
+                            "третий титул",
+                            "Описание товара 3",
+                            "-216515089_457239030",
+                            "https://vk.com/market-143314838?w=product-143314838_5867519%2Fquery",
+                            [Text("Button num 3", ButtonColor.PRIMARY)]
+                        )
+                    ]
+                )
+                send_some_message(id, "Карусель карусель", carousel=carousel_available)
